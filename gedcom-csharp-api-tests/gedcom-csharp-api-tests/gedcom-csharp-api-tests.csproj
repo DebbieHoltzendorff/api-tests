@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8EC9598F-48F8-4E0E-B250-F683A5C3A3F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gedcomx.Rs.Api.Test</RootNamespace>
+    <AssemblyName>gedcom-csharp-api-tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="itextsharp">
+      <HintPath>..\packages\iTextSharp.5.5.3\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="KellermanSoftware.Compare-NET-Objects">
+      <HintPath>..\packages\CompareNETObjects.3.01.0.0\lib\net45\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="AuthoritiesTests.cs" />
+    <Compile Include="PersonTests.cs" />
+    <Compile Include="PlacesTests.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SpouseTests.cs" />
+    <Compile Include="TestBacking.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\FamilySearch.Api\FamilySearch.Api.csproj">
+      <Project>{bb8a28f0-e46b-4e36-aaf8-05f472b1c850}</Project>
+      <Name>FamilySearch.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\GEDCOM X Date\GEDCOM X Date.csproj">
+      <Project>{80b68424-7aa2-42de-a875-fcd2b8c4b52c}</Project>
+      <Name>GEDCOM X Date</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\GEDCOM X Support\GEDCOM X Support.csproj">
+      <Project>{4a6f7218-7aa8-40fd-8fe9-e309635242b7}</Project>
+      <Name>GEDCOM X Support</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.CLI.Test\Gedcomx.CLI.Test.csproj">
+      <Project>{2db621cf-0164-43a6-a31d-811be8bf3527}</Project>
+      <Name>Gedcomx.CLI.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.CLI\GEDCOM X Command Line Interface.csproj">
+      <Project>{26aebdf3-dcc8-4fe9-8bc4-796f306e4ca2}</Project>
+      <Name>GEDCOM X Command Line Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model.Fs\GEDCOM X FamilySearch Model Extensions.csproj">
+      <Project>{fcc74cf5-ad92-4ab2-becc-ce2882a77796}</Project>
+      <Name>GEDCOM X FamilySearch Model Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model.Rs\GEDCOM X REST Model Extensions.csproj">
+      <Project>{a171b653-434f-494d-bda9-0dc2fcd86ba6}</Project>
+      <Name>GEDCOM X REST Model Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model\GEDCOM X Model.csproj">
+      <Project>{4629ba54-406e-4cd2-9dc6-cda2c5206eb7}</Project>
+      <Name>GEDCOM X Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Rs.Api\Gedcomx.Rs.Api.csproj">
+      <Project>{6c4454bd-26bf-43ad-9732-9f1ce4b1cb87}</Project>
+      <Name>Gedcomx.Rs.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Util\GEDCOM X Utilities.csproj">
+      <Project>{876ea5fa-fae0-4280-9409-3754f3c8aaa4}</Project>
+      <Name>GEDCOM X Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
