@@ -35,24 +35,83 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FamilySearch.API.SDK">
+      <HintPath>..\packages\FamilySearch.API.SDK.1.0.5422.31549\lib\net45\FamilySearch.API.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Flurl.1.0.2\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Flurl.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.API.SDK">
+      <HintPath>..\packages\Gedcomx.API.SDK.1.0.5422.31548\lib\net45\Gedcomx.API.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.Date, Version=1.0.5422.31552, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.Date.1.0.5422.31552\lib\net45\Gedcomx.Date.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.File, Version=1.0.5422.31544, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.File.1.0.5422.31544\lib\net45\Gedcomx.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.Model, Version=1.0.5422.31541, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.Model.1.0.5422.31541\lib\net45\Gedcomx.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.Model.Fs, Version=1.0.5422.31542, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.Model.Fs.1.0.5422.31542\lib\net45\Gedcomx.Model.Fs.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.Model.Rs, Version=1.0.5422.31542, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.Model.Rs.1.0.5422.31542\lib\net45\Gedcomx.Model.Rs.dll</HintPath>
+    </Reference>
+    <Reference Include="Gedcomx.Support, Version=1.0.5422.31544, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FamilySearch.API.SDK.1.0.5422.31549\lib\net45\Gedcomx.Support.dll</HintPath>
+    </Reference>
     <Reference Include="itextsharp">
       <HintPath>..\packages\iTextSharp.5.5.3\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="JsonLD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\json-ld.net.1.0.3\lib\net40\JsonLD.dll</HintPath>
     </Reference>
     <Reference Include="KellermanSoftware.Compare-NET-Objects">
       <HintPath>..\packages\CompareNETObjects.3.01.0.0\lib\net45\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Link, Version=1.0.5422.31547, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Gedcomx.API.SDK.1.0.5422.31548\lib\net45\Link.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=104.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RestSharp.104.5.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="Tavis.UriTemplates, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Tavis.UriTemplates.0.4\lib\Net35\Tavis.UriTemplates.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -69,7 +128,6 @@
   <ItemGroup>
     <Compile Include="AuthoritiesTests.cs" />
     <Compile Include="PersonTests.cs" />
-    <Compile Include="PlacesTests.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -82,48 +140,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\FamilySearch.Api\FamilySearch.Api.csproj">
-      <Project>{bb8a28f0-e46b-4e36-aaf8-05f472b1c850}</Project>
-      <Name>FamilySearch.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\GEDCOM X Date\GEDCOM X Date.csproj">
-      <Project>{80b68424-7aa2-42de-a875-fcd2b8c4b52c}</Project>
-      <Name>GEDCOM X Date</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\GEDCOM X Support\GEDCOM X Support.csproj">
-      <Project>{4a6f7218-7aa8-40fd-8fe9-e309635242b7}</Project>
-      <Name>GEDCOM X Support</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.CLI.Test\Gedcomx.CLI.Test.csproj">
-      <Project>{2db621cf-0164-43a6-a31d-811be8bf3527}</Project>
-      <Name>Gedcomx.CLI.Test</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.CLI\GEDCOM X Command Line Interface.csproj">
-      <Project>{26aebdf3-dcc8-4fe9-8bc4-796f306e4ca2}</Project>
-      <Name>GEDCOM X Command Line Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model.Fs\GEDCOM X FamilySearch Model Extensions.csproj">
-      <Project>{fcc74cf5-ad92-4ab2-becc-ce2882a77796}</Project>
-      <Name>GEDCOM X FamilySearch Model Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model.Rs\GEDCOM X REST Model Extensions.csproj">
-      <Project>{a171b653-434f-494d-bda9-0dc2fcd86ba6}</Project>
-      <Name>GEDCOM X REST Model Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Model\GEDCOM X Model.csproj">
-      <Project>{4629ba54-406e-4cd2-9dc6-cda2c5206eb7}</Project>
-      <Name>GEDCOM X Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Rs.Api\Gedcomx.Rs.Api.csproj">
-      <Project>{6c4454bd-26bf-43ad-9732-9f1ce4b1cb87}</Project>
-      <Name>Gedcomx.Rs.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gedcomx-csharp\Gedcomx.Util\GEDCOM X Utilities.csproj">
-      <Project>{876ea5fa-fae0-4280-9409-3754f3c8aaa4}</Project>
-      <Name>GEDCOM X Utilities</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -152,6 +168,11 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,0 +1,27 @@
+{
+	"homepage": "https://github.com/FamilySearch/api-tests",
+	"description": "PHP libraries for GEDCOM X.",
+	"keywords": ["gedcomx","familysearch","sdk", "genealogy"],
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "FamilySearch",
+            "homepage": "https://familysearch.org"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/FamilySearch/api-tests/issues"
+    },
+	"require": {
+		"gedcomx/gedcomx-php": "dev-master",
+		"phpunit/phpunit": "3.7.*",
+        "fzaninotto/faker": "1.5.*@dev"
+	},
+	"autoload": {
+		"psr-4": {
+			"Gedcomx\\ApiTests\\":"tests/",
+			"Gedcomx\\Tests\\":"vendor/gedcomx/gedcomx-php/tests/"
+		}
+	}
+}
