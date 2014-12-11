@@ -332,7 +332,7 @@ class PersonTests extends ApiTestCase
     /**
      * @link https://familysearch.org/developers/docs/api/tree/Read_Person_With_Relationships_usecase
      */
-    public function restReadPersonWithRelationships()
+    public function testReadPersonWithRelationships()
     {
         $factory = new FamilyTreeStateFactory();
         $collection = $this->collectionState($factory);
@@ -659,18 +659,18 @@ class PersonTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson();
-        if( $personState->getPerson() == null ){
-            $uri = $personState->getSelfUri();
-            $personState = $this->collectionState()->readPerson($uri);
-        }
+        $personState = $this->createPerson()->get();
         $gender = new Gender(array(
-            "type" =>GenderType::MALE
-        ));
+                                 "type" =>GenderType::MALE
+                             ));
         $personState->updateGender($gender);
 
-        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $personState->getResponse());
-
+        $this->assertAttributeEquals(
+            HttpStatus::OK,
+            "statusCode",
+            $personState->getResponse(),
+            $this->buildFailMessage(__METHOD__, $personState)
+        );
     }
 
     /**
@@ -681,11 +681,7 @@ class PersonTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson();
-        if( $personState->getPerson() == null ){
-            $uri = $personState->getSelfUri();
-            $personState = $this->collectionState()->readPerson($uri);
-        }
+        $personState = $this->createPerson()->get();
         $fact = FactBuilder::eagleScout();
         $newState = $personState->addFact($fact);
 
@@ -787,11 +783,7 @@ class PersonTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson();
-        if( $personState->getPerson() == null ){
-            $uri = $personState->getSelfUri();
-            $personState = $this->collectionState()->readPerson($uri);
-        }
+        $personState = $this->createPerson()->get();
         $name = PersonBuilder::nickName();
         $newPersonState = $personState->addName($name);
 
@@ -870,7 +862,12 @@ class PersonTests extends ApiTestCase
         $person = $this->collectionState()->readPersonForCurrentUser();
         $newState = $person->deleteDiscussionReference($ref);
 
-        $this->assertAttributeEquals(HttpStatus::NO_CONTENT, "statusCode", $newState->getResponse(), $this->buildFailMessage(__METHOD__, $newState) );
+        $this->assertAttributeEquals(
+            HttpStatus::NO_CONTENT,
+            "statusCode",
+            $newState->getResponse(),
+            $this->buildFailMessage(__METHOD__, $newState)
+        );
     }
 
     /**
@@ -902,7 +899,6 @@ class PersonTests extends ApiTestCase
         $this->collectionState($factory);
 
         $personState = $this->createPerson()->get();
-        $this->queueForDelete($personState);
 
         $newState = $personState->delete();
         $this->assertAttributeEquals(
