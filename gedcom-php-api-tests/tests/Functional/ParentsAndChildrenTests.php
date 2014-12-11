@@ -66,7 +66,10 @@ class ParentsAndChildrenTests extends ApiTestCase
         $this->collectionState($factory);
 
         $person1 = $this->createPerson('male')->get();
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $person1->getResponse());
         $person2 = $this->createPerson('female')->get();
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $person2->getResponse());
+
 
         $relation = $this->collectionState()->addSpouseRelationship($person1, $person2);
         $this->queueForDelete($relation);
@@ -80,6 +83,9 @@ class ParentsAndChildrenTests extends ApiTestCase
         $data_check = $entity->getPerson1() instanceof ResourceReference
             && $entity->getPerson2() instanceof ResourceReference;
         $this->assertTrue( $data_check );
+
+        $person1->delete();
+        $person2->delete();
     }
 
     /**

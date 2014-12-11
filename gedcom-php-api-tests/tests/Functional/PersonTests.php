@@ -32,13 +32,11 @@ class PersonTests extends ApiTestCase
     {
         $factory = new StateFactory();
         $this->collectionState($factory);
-        $person = $this->createPerson();
 
-        $this->assertEquals(
-            HttpStatus::CREATED,
-            $person->getResponse()->getStatusCode(),
-            $this->buildFailMessage(__METHOD__, $person)
-        );
+        $personState = $this->createPerson();
+
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse(), $this->buildFailMessage(__METHOD__, $personState) );
+        $personState->delete();
     }
 
     /**
@@ -53,12 +51,20 @@ class PersonTests extends ApiTestCase
     {
         $factory = new StateFactory();
         $this->collectionState($factory);
-        $person = $this->createPerson();
+
+        $personState = $this->createPerson();
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse() );
+
+        //if( self::$personState->getPerson() == null ){
+        //    $uri = self::$personState->getSelfUri();
+        //    self::$personState = $this->collectionState()->readPerson($uri);
+        //}
 
         $fact = FactBuilder::militaryService();
-        $newState = $person->addFact($fact);
+        $newState = $personState->addFact($fact);
 
         $this->assertAttributeEquals(HttpStatus::NO_CONTENT, "statusCode", $newState->getResponse() );
+        $personState->delete();
     }
 
     /**
@@ -82,7 +88,6 @@ class PersonTests extends ApiTestCase
     public function testCreateDiscussionReference(){
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
-        $person = $this->createPerson();
 
         $userState = $this->collectionState()->readCurrentUser();
         $discussion = DiscussionBuilder::createDiscussion($userState->getUser()->getTreeUserId());
@@ -90,8 +95,9 @@ class PersonTests extends ApiTestCase
         $discussionState = $this->collectionState()->addDiscussion($discussion);
         $this->queueForDelete($discussionState);
 
+        $personState = $this->getPerson();
         /** @var \Gedcomx\Rs\Client\PersonState $newState */
-        $newState = $person->addDiscussionState($discussionState);
+        $newState = $personState->addDiscussionState($discussionState);
 
         $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $newState->getResponse(), $this->buildFailMessage(__METHOD__, $newState) );
     }
@@ -113,9 +119,11 @@ class PersonTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson()->get();
+        $personState = $this->createPerson();
+        $personStateGet = $personState->get();
 
-        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $personState->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $personStateGet->getResponse() );
     }
 
     /**
@@ -377,6 +385,7 @@ class PersonTests extends ApiTestCase
 
         $person->loadChildRelationships();
 
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $person->getResponse() );
         $this->assertNotEmpty($person->getRelationshipsToChildren(), "No child relationships found." );
     }
 
@@ -396,7 +405,10 @@ class PersonTests extends ApiTestCase
 
         $child->loadParentRelationships();
 
-        $this->assertNotEmpty($child->getRelationshipsToParents(), "No parent relationships found." );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $father->getResponse());
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $mother->getResponse());
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $child->getResponse());
+        $this->assertNotEmpty($child->getRelationshipsToParents(), "No parent relationships found.");
     }
 
     /**
@@ -415,6 +427,8 @@ class PersonTests extends ApiTestCase
 
         $husband->loadSpouseRelationships();
 
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $husband->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $wife->getResponse() );
         $this->assertNotEmpty($husband->getSpouseRelationships(), "No spouse relationships found." );
     }
 
@@ -434,7 +448,9 @@ class PersonTests extends ApiTestCase
         $option = new QueryParameter(true,"persons","");
         $husband->loadSpouseRelationships($option);
 
-        $this->assertGreaterThan(0, $husband->getEntity()->getPersons(), "No persons relationships found." );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $husband->getResponse());
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $wife->getResponse());
+        $this->assertGreaterThan(0, $husband->getEntity()->getPersons(), "No persons relationships found.");
     }
 
     /**
@@ -444,7 +460,6 @@ class PersonTests extends ApiTestCase
     public function testReadDiscussionReference(){
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
-        $person = $this->createPerson()->get();
 
         $userState = $this->collectionState()->readCurrentUser();
         $discussion = DiscussionBuilder::createDiscussion($userState->getUser()->getTreeUserId());
@@ -452,14 +467,16 @@ class PersonTests extends ApiTestCase
         $discussionState = $this->collectionState()->addDiscussion($discussion);
         $this->queueForDelete($discussionState);
 
-        $newState = $person->addDiscussionState($discussionState);
+        $personState = $this->getPerson();
+        /** @var \Gedcomx\Rs\Client\PersonState $newState */
+        $newState = $personState->addDiscussionState($discussionState);
 
         $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $newState->getResponse(), $this->buildFailMessage(__METHOD__, $newState) );
 
-        $person->loadDiscussionReferences();
+        $personState->loadDiscussionReferences();
 
         $found = false;
-        foreach ($person->getPerson()->getExtensionElements() as $ext) {
+        foreach ($personState->getPerson()->getExtensionElements() as $ext) {
             if ($ext instanceof DiscussionReference) {
                 $found = true;
                 break;
@@ -484,7 +501,12 @@ class PersonTests extends ApiTestCase
 
         $childrenState = $person->readChildren();
 
-        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $childrenState->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $person->getResponse());
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $child1->getResponse());
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $child2->getResponse());
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $childRel1->getResponse());
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $childRel2->getResponse());
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $childrenState->getResponse());
     }
 
     /**
@@ -537,6 +559,10 @@ class PersonTests extends ApiTestCase
 
         $parentState = $child->readParents();
 
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $father->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $mother->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $child->getResponse() );
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $family->getResponse() );
         $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $parentState->getResponse() );
     }
 
@@ -640,9 +666,10 @@ class PersonTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $person = $this->createPerson();
-        $newState = $person->head();
+        $personState = $this->createPerson();
+        $newState = $personState->head();
 
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse());
         $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $newState->getResponse());
     }
 
@@ -660,17 +687,15 @@ class PersonTests extends ApiTestCase
         $this->collectionState($factory);
 
         $personState = $this->createPerson();
-        if( $personState->getPerson() == null ){
-            $uri = $personState->getSelfUri();
-            $personState = $this->collectionState()->readPerson($uri);
-        }
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse());
+
         $gender = new Gender(array(
             "type" =>GenderType::MALE
         ));
-        $personState->updateGender($gender);
+        $status = $personState->updateGender($gender);
 
-        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $personState->getResponse());
-
+        $this->assertAttributeEquals(HttpStatus::NO_CONTENT, "statusCode", $status->getResponse());
+        $personState->delete();
     }
 
     /**
