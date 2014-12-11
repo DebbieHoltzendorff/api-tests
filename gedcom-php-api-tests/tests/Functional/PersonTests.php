@@ -643,6 +643,7 @@ class PersonTests extends ApiTestCase
         $person = $this->createPerson();
         $newState = $person->head();
 
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $person->getResponse());
         $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $newState->getResponse());
     }
 
@@ -661,6 +662,9 @@ class PersonTests extends ApiTestCase
 
         $personState = $this->createPerson()->get();
         $gender = new Gender(array(
+            "type" =>GenderType::MALE
+        ));
+        $status = $personState->updateGender($gender);
                                  "type" =>GenderType::MALE
                              ));
         $personState->updateGender($gender);

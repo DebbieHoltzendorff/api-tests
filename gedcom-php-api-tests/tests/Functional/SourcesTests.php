@@ -40,16 +40,17 @@ class SourcesTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson()->get();
-
+        $personState = $this->createPerson();
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse() );
+        $personStateGet = $personState->get();
         $sourceState = $this->createSource();
-        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $sourceState->getResponse());
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $sourceState->getResponse() );
 
         $reference = new SourceReference();
         $reference->setDescriptionRef($sourceState->getSelfUri());
         $reference->setAttribution( new Attribution( array("changeMessage" => $this->faker->sentence(6))));
         /** @var \Gedcomx\Rs\Client\PersonState $newState */
-        $newState = $personState->addSourceReferenceObj($reference);
+        $newState = $personStateGet->addSourceReferenceObj($reference);
         $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $newState->getResponse() );
 
         $sourceState->delete();
@@ -176,6 +177,7 @@ class SourcesTests extends ApiTestCase
         //  Now test it
         $testSubject->loadSourceReferences();
 
+        $this->assertAttributeEquals(HttpStatus::OK, "statusCode", $testSubject->getResponse() );
         $this->assertNotEmpty($testSubject->getEntity()->getSourceDescriptions());
     }
 
@@ -397,7 +399,9 @@ class SourcesTests extends ApiTestCase
         $factory = new StateFactory();
         $this->collectionState($factory);
 
-        $personState = $this->createPerson()->get();
+        $personState = $this->createPerson();
+        $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $personState->getResponse());
+        $personState = $personState->get();
 
         $sourceState = $this->createSource();
         $this->assertAttributeEquals(HttpStatus::CREATED, "statusCode", $sourceState->getResponse());
@@ -405,14 +409,16 @@ class SourcesTests extends ApiTestCase
         $reference = new SourceReference();
         $reference->setDescriptionRef($sourceState->getSelfUri());
         $reference->setAttribution( new Attribution( array(
-                                                         "changeMessage" => $this->faker->sentence(6)
-                                                     )));
+            "changeMessage" => $this->faker->sentence(6)
+        )));
 
         $personState->addSourceReferenceObj($reference);
         $newState = $personState->loadSourceReferences();
         $persons = $newState->getEntity()->getPersons();
         $newerState = $newState->updateSourceReferences($persons[0]);
         $this->assertAttributeEquals(HttpStatus::NO_CONTENT, "statusCode", $newerState->getResponse());
+
+        $personState->delete();
     }
 
     /**
