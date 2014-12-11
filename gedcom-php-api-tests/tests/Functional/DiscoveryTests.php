@@ -107,6 +107,18 @@ class DiscoveryTests extends ApiTestCase
             $dateState->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__."(Read date collection)", $dateState)
         );
+        $normalized = $dateState->normalizeDate("26 Nov 1934");
+        $this->assertEquals(
+            'gedcomx-date:+1934-11-26',
+            $normalized->getFormal(),
+            "Formalized date format incorrect: " . $normalized->getFormal()
+        );
+        $extensions = $normalized->getNormalizedExtensions();
+        $this->assertEquals(
+            '26 November 1934',
+            $extensions[0]->getValue(),
+            "Normalized date format incorrect: " . $extensions[0]->getValue()
+        );
     }
 
     /**
