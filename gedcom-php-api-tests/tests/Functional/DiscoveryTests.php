@@ -133,7 +133,9 @@ class DiscoveryTests extends ApiTestCase
         $factory = new StateFactory();
         $collection = $factory->newDiscoveryState();
         $subsState = $collection->readSubcollections();
+        $this->assertNotNull($subsState);
         $collections = $subsState->getCollections();
+        $this->assertNotEmpty($collections);
         $link = null;
         foreach ($collections as $record) {
             if ($record->getId() == "FSDF") {
@@ -146,7 +148,7 @@ class DiscoveryTests extends ApiTestCase
         $this->assertEquals(
             HttpStatus::OK,
             $dateState->getResponse()->getStatusCode(),
-            $this->buildFailMessage(__METHOD__."(Read date collection)", $dateState)
+            $this->buildFailMessage(__METHOD__."(Read discussions collection)", $dateState)
         );
     }
 
