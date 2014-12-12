@@ -13,6 +13,8 @@ use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreePersonState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeRelationshipState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeStateFactory;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\Util\ChangeEntry;
+use Gedcomx\Rs\Client\Options\QueryParameter;
+use Gedcomx\Rs\Client\Util\HttpStatus;
 use Gedcomx\Tests\ApiTestCase;
 
 class ChangeHistoryTests extends ApiTestCase
@@ -22,7 +24,10 @@ class ChangeHistoryTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
 
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
         $state = $person->readChangeHistory();
 
         $this->assertNotNull($state->ifSuccessful());
@@ -37,8 +42,11 @@ class ChangeHistoryTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
 
-        $person = $this->createPerson()->get();
-        $state = $person->readChangeHistory();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+        $state = $person->readChangeHistory(QueryParameter::count(10));
 
         $this->assertNotNull($state->ifSuccessful());
         $this->assertEquals((int)$state->getResponse()->getStatusCode(), 200);
