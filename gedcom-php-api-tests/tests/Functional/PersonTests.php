@@ -242,15 +242,18 @@ class PersonTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
 
         $filename = ArtifactBuilder::makeTextFile();
         $artifact = new DataSource();
         $artifact->setFile($filename);
         $a1 = $person->addArtifact($artifact);
         $this->queueForDelete($a1);
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
-        $person = $person->get();
         $memories = $person->readArtifacts();
 
         $this->assertEquals(
@@ -258,6 +261,9 @@ class PersonTests extends ApiTestCase
             $memories->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $memories)
         );
+        $this->assertNotNull($memories->getEntity());
+        $this->assertNotNull($memories->getEntity()->getSourceDescriptions());
+        $this->assertGreaterThan(0, count($memories->getEntity()->getSourceDescriptions()));
     }
 
     /**
@@ -268,15 +274,17 @@ class PersonTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
 
         $filename = ArtifactBuilder::makeTextFile();
         $artifact = new DataSource();
         $artifact->setFile($filename);
         $a1 = $person->addArtifact($artifact);
         $this->queueForDelete($a1);
-
-        $person = $person->get();
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
         $option = new QueryParameter(true, "type", "photo");
         $memories = $person->readArtifacts($option);
