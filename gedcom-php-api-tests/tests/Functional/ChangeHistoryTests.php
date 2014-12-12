@@ -125,10 +125,17 @@ class ChangeHistoryTests extends ApiTestCase
         $this->collectionState($factory);
 
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson('male')->get();
+        $person = $this->createPerson('male');
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+        $this->assertNotNull($person->getPerson());
+        $this->assertNotNull($person->getPerson()->getFacts());
+        $this->assertGreaterThan(0, $person->getPerson()->getFacts());
         $facts = $person->getPerson()->getFacts();
         $person->deleteFact(array_shift($facts));
         $changes = $person->readChangeHistory();
+        $this->assertEquals(HttpStatus::OK, $changes->getResponse()->getStatusCode());
         $deleted = null;
         /** @var ChangeEntry $entry */
         foreach ($changes->getPage()->getEntries() as $entry) {
@@ -137,6 +144,7 @@ class ChangeHistoryTests extends ApiTestCase
                 break;
             }
         }
+        $this->assertNotNull($deleted);
         $restore = null;
         /** @var ChangeEntry $entry */
         foreach ($changes->getPage()->getEntries() as $entry) {
@@ -145,9 +153,11 @@ class ChangeHistoryTests extends ApiTestCase
                 break;
             }
         }
+        $this->assertNotNull($restore);
+        $this->assertNotNull($restore->getEntry());
         $state = $changes->restoreChange($restore->getEntry());
 
         $this->assertNotNull($state->ifSuccessful());
-        $this->assertEquals((int)$state->getResponse()->getStatusCode(), 204);
+        $this->assertEquals(HttpStatus::NO_CONTENT, $state->getResponse()->getStatusCode());
     }
 }
