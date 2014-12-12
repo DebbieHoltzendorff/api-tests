@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "592a2b0488f6d6437332d1d3cff41644",
+    "hash": "78096e05f45427312d6c1a0e9c8aa045",
     "packages": [
         {
             "name": "apache/log4php",
@@ -91,12 +91,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FamilySearch/gedcomx-php.git",
-                "reference": "6af9a439c31e8b12a5abc8f1c4237f40c9f14af0"
+                "reference": "9f7befe68228c356f3aed6413aef94b38a3919b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FamilySearch/gedcomx-php/zipball/6af9a439c31e8b12a5abc8f1c4237f40c9f14af0",
-                "reference": "6af9a439c31e8b12a5abc8f1c4237f40c9f14af0",
+                "url": "https://api.github.com/repos/FamilySearch/gedcomx-php/zipball/9f7befe68228c356f3aed6413aef94b38a3919b8",
+                "reference": "9f7befe68228c356f3aed6413aef94b38a3919b8",
                 "shasum": ""
             },
             "require": {
@@ -135,7 +135,7 @@
                 "genealogy",
                 "sdk"
             ],
-            "time": "2014-12-11 17:20:24"
+            "time": "2014-12-12 00:31:05"
         },
         {
             "name": "guzzle/guzzle",
@@ -228,6 +228,62 @@
                 "web service"
             ],
             "time": "2014-08-11 04:32:36"
+        },
+        {
+            "name": "intervention/image",
+            "version": "2.0.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/image.git",
+                "reference": "0d2eb5858520ace6a7d1b42f4267a6488a63c0ed"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/0d2eb5858520ace6a7d1b42f4267a6488a63c0ed",
+                "reference": "0d2eb5858520ace6a7d1b42f4267a6488a63c0ed",
+                "shasum": ""
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.2",
+                "phpunit/phpunit": "3.*"
+            },
+            "suggest": {
+                "ext-gd": "to use GD library based image processing.",
+                "ext-imagick": "to use Imagick based image processing.",
+                "intervention/imagecache": "Caching extension for the Intervention Image library"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Image\\": "src/Intervention/Image"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@olivervogel.net",
+                    "homepage": "http://olivervogel.net/"
+                }
+            ],
+            "description": "Image handling and manipulation library with support for Laravel integration",
+            "homepage": "http://image.intervention.io/",
+            "keywords": [
+                "gd",
+                "image",
+                "imagick",
+                "laravel",
+                "thumbnail",
+                "watermark"
+            ],
+            "time": "2014-11-21 18:49:22"
         },
         {
             "name": "ml/iri",
@@ -324,6 +380,49 @@
                 "jsonld"
             ],
             "time": "2014-09-15 10:41:19"
+        },
+        {
+            "name": "mpdf/mpdf",
+            "version": "v5.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/finwe/mpdf.git",
+                "reference": "ace190986978df40b9c416cf7ba8761945fc1758"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/finwe/mpdf/zipball/ace190986978df40b9c416cf7ba8761945fc1758",
+                "reference": "ace190986978df40b9c416cf7ba8761945fc1758",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=4.3.10"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "mpdf.php",
+                    "classes"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-1.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Ian Back"
+                }
+            ],
+            "description": "A PHP class to generate PDF files from HTML with Unicode/UTF-8 and CJK support",
+            "homepage": "http://www.mpdf1.com/mpdf/index.php",
+            "keywords": [
+                "pdf",
+                "php",
+                "utf-8"
+            ],
+            "time": "2014-08-24 08:33:20"
         },
         {
             "name": "phpunit/php-code-coverage",

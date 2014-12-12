@@ -16,7 +16,9 @@
 	"require": {
 		"gedcomx/gedcomx-php": "dev-master",
 		"phpunit/phpunit": "3.7.*",
-        "fzaninotto/faker": "1.5.*@dev"
+        "fzaninotto/faker": "1.5.*@dev",
+        "intervention/image": "2.0.*",
+        "mpdf/mpdf": "5.7.3"
 	},
 	"autoload": {
 		"psr-4": {
