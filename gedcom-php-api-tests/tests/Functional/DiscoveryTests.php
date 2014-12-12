@@ -2,6 +2,8 @@
 
 namespace Gedcomx\ApiTests\Functional;
 
+use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilySearchCollectionState;
+use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeStateFactory;
 use Gedcomx\Rs\Client\Rel;
 use Gedcomx\Rs\Client\StateFactory;
 use Gedcomx\Rs\Client\Util\HttpStatus;
@@ -89,9 +91,10 @@ class DiscoveryTests extends ApiTestCase
      */
     public function testReadDateAuthority()
     {
-        $factory = new StateFactory();
+        $factory = new FamilyTreeStateFactory();
         $collection = $factory->newDiscoveryState();
         $subsState = $collection->readSubcollections();
+        $this->assertNotNull($subsState);
         $collections = $subsState->getCollections();
         $link = null;
         foreach ($collections as $record) {
@@ -101,6 +104,7 @@ class DiscoveryTests extends ApiTestCase
             }
         }
         $this->assertNotEmpty($link, 'Date Authority link not found');
+        /** @var FamilySearchCollectionState $dateState */
         $dateState = $factory->newCollectionState($link->getHref());
         $this->assertEquals(
             HttpStatus::OK,
