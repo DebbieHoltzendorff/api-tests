@@ -52,7 +52,7 @@ class UserTests extends ApiTestCase
      */
     public function testReadCurrentUserHistory()
     {
-        $this->markTestSkipped('Skipping for now.');
+        $this->markTestSkipped('Skipping for now. Despite posting history and receiving a 200-OK response, the server does not subsequently return this data.');
 
         $factory = new FamilySearchStateFactory();
         $this->collectionState($factory);
@@ -89,7 +89,7 @@ class UserTests extends ApiTestCase
      */
     public function testUpdateCurrentUserHistory()
     {
-        $this->markTestSkipped('Skipping for now.');
+        $this->markTestSkipped('Skipping for now. Despite posting history and receiving a 200-OK response, the server does not subsequently return this data.');
 
         $factory = new FamilySearchStateFactory();
         $this->collectionState($factory);
