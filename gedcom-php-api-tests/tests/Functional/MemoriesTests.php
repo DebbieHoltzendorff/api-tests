@@ -214,9 +214,11 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
 
         $upload = $upload->get();
 
@@ -348,12 +350,16 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description)->get();
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $gedcom = $upload->getEntity();
+        $this->assertNotNull($gedcom);
         $descriptions = $gedcom->getSourceDescriptions();
+        $this->assertNotEmpty($descriptions);
         foreach ($descriptions as $source) {
             foreach ($source->getDescriptions() as $d) {
                 $d->setValue($this->faker->sentence(3));
@@ -460,8 +466,10 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
         $upload = $upload->delete();
 
         $this->assertEquals(
@@ -469,6 +477,9 @@ class MemoriesTests extends ApiTestCase
             $upload->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $upload)
         );
+
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::NOT_FOUND, $upload->getResponse()->getStatusCode());
     }
 
     /**
