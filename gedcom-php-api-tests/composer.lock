@@ -91,12 +91,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FamilySearch/gedcomx-php.git",
-                "reference": "6af9a439c31e8b12a5abc8f1c4237f40c9f14af0"
+                "reference": "9f7befe68228c356f3aed6413aef94b38a3919b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FamilySearch/gedcomx-php/zipball/6af9a439c31e8b12a5abc8f1c4237f40c9f14af0",
-                "reference": "6af9a439c31e8b12a5abc8f1c4237f40c9f14af0",
+                "url": "https://api.github.com/repos/FamilySearch/gedcomx-php/zipball/9f7befe68228c356f3aed6413aef94b38a3919b8",
+                "reference": "9f7befe68228c356f3aed6413aef94b38a3919b8",
                 "shasum": ""
             },
             "require": {
@@ -135,7 +135,7 @@
                 "genealogy",
                 "sdk"
             ],
-            "time": "2014-12-11 17:20:24"
+            "time": "2014-12-12 00:31:05"
         },
         {
             "name": "guzzle/guzzle",
