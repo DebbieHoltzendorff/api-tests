@@ -548,19 +548,20 @@ class MemoriesTests extends ApiTestCase
         $artifact->setFile($filename);
 
         $description = SourceBuilder::newSource();
-
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description);
+        $this->queueForDelete($upload);
         $this->assertEquals(
             HttpStatus::CREATED,
             $upload->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $upload)
         );
-
-        $upload->delete();
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
     }
 
     /**
@@ -578,6 +579,7 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact);
         $this->queueForDelete($upload);
@@ -587,6 +589,8 @@ class MemoriesTests extends ApiTestCase
             $upload->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $upload)
         );
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
     }
 
     /**
@@ -604,6 +608,7 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
@@ -613,6 +618,8 @@ class MemoriesTests extends ApiTestCase
             $upload->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $upload)
         );
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
     }
 
     /**
@@ -630,6 +637,7 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilySearchStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
@@ -639,6 +647,8 @@ class MemoriesTests extends ApiTestCase
             $upload->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $upload)
         );
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
     }
 
     /**
