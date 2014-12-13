@@ -141,14 +141,21 @@ class SourcesTests extends ApiTestCase
     public function testCreateUserUploadedSource()
     {
         $this->collectionState(new FamilyTreeStateFactory());
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
         $ds = new DataSource();
         $ds->setTitle("Sample Memory");
         $ds->setFile(ArtifactBuilder::makeTextFile());
         $a1 = $person->addArtifact($ds);
         $this->queueForDelete($a1);
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
-        $artifact = $person->readArtifacts()->getSourceDescription();
+        $artifacts = $person->readArtifacts();
+        $this->assertEquals(HttpStatus::OK, $artifacts->getResponse()->getStatusCode());
+
+        $artifact = $artifacts->getSourceDescription();
         $memoryUri = $artifact->getLink("memory")->getHref();
         $source = SourceBuilder::newSource();
         $source->setAbout($memoryUri);

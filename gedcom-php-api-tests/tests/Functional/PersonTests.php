@@ -14,6 +14,7 @@ use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreePersonState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeStateFactory;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\Rel;
 use Gedcomx\Extensions\FamilySearch\Types\FactType;
+use Gedcomx\Gedcomx;
 use Gedcomx\Rs\Client\Options\HeaderParameter;
 use Gedcomx\Rs\Client\Options\Preconditions;
 use Gedcomx\Rs\Client\Options\QueryParameter;
@@ -241,15 +242,18 @@ class PersonTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
 
         $filename = ArtifactBuilder::makeTextFile();
         $artifact = new DataSource();
         $artifact->setFile($filename);
         $a1 = $person->addArtifact($artifact);
         $this->queueForDelete($a1);
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
-        $person = $person->get();
         $memories = $person->readArtifacts();
 
         $this->assertEquals(
@@ -257,6 +261,9 @@ class PersonTests extends ApiTestCase
             $memories->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $memories)
         );
+        $this->assertNotNull($memories->getEntity());
+        $this->assertNotNull($memories->getEntity()->getSourceDescriptions());
+        $this->assertGreaterThan(0, count($memories->getEntity()->getSourceDescriptions()));
     }
 
     /**
@@ -267,15 +274,17 @@ class PersonTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
 
         $filename = ArtifactBuilder::makeTextFile();
         $artifact = new DataSource();
         $artifact->setFile($filename);
         $a1 = $person->addArtifact($artifact);
         $this->queueForDelete($a1);
-
-        $person = $person->get();
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
         $option = new QueryParameter(true, "type", "photo");
         $memories = $person->readArtifacts($option);
@@ -305,16 +314,35 @@ class PersonTests extends ApiTestCase
     {
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
+        $memories = $factory->newMemoriesState();
+        $memories = $this->authorize($memories);
 
-        $person = $this->createPerson()->get();
-        /** @var \Guzzle\Http\Message\Response $response */
+        $filename =  ArtifactBuilder::makeImage();
+        $artifact = new DataSource();
+        $artifact->setFile($filename);
+
+        /** @var FamilyTreePersonState $person */
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+
+        $description = $this->createSource()->get()->getSourceDescription();
+        /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
+        $upload = $memories->addArtifact($artifact, $description)->get();
+        $this->queueForDelete($upload);
+
+        $persona = $upload->addPersonPersona(PersonBuilder::buildPerson('male'))->get();
+        $this->queueForDelete($persona);
+
+        $person->addPersonaPersonState($persona);
+
+        sleep(5); // Need to wait before the portrait details are available for testing
         $response = $person->readPortrait();
 
-        $this->assertEquals(
-            HttpStatus::NO_CONTENT,
-            $response->getStatusCode(),
-            'Get portrait failed. Returned: ' . HttpStatus::getText($response->getStatusCode()) . "(" . $response->getStatusCode() . ")"
-        );
+        $this->assertNotNull($response);
+        $this->assertEquals(HttpStatus::OK, $response->getStatusCode());
+        $this->assertGreaterThan(0, $response->getRedirectCount());
     }
 
     /**
@@ -325,7 +353,10 @@ class PersonTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
 
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
         $defaultImage = new QueryParameter(true, "default","http://i.imgur.com/d9J0gYA.jpg");
 
         /** @var \Guzzle\Http\Message\Response $response */
@@ -346,9 +377,29 @@ class PersonTests extends ApiTestCase
     {
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
+        $memories = $factory->newMemoriesState();
+        $memories = $this->authorize($memories);
+
+        $filename =  ArtifactBuilder::makeImage();
+        $artifact = new DataSource();
+        $artifact->setFile($filename);
 
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+
+        $description = $this->createSource()->get()->getSourceDescription();
+        /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
+        $upload = $memories->addArtifact($artifact, $description)->get();
+        $this->queueForDelete($upload);
+
+        $persona = $upload->addPersonPersona(PersonBuilder::buildPerson('male'))->get();
+        $this->queueForDelete($persona);
+
+        $person->addPersonaPersonState($persona);
+
         $portraits = $person->readPortraits();
 
         $this->assertEquals(
@@ -356,6 +407,10 @@ class PersonTests extends ApiTestCase
             $portraits->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $portraits)
         );
+
+        $this->assertNotNull($portraits->getEntity());
+        $this->assertNotNull($portraits->getEntity()->getSourceDescriptions());
+        $this->assertGreaterThan(0, count($portraits->getEntity()->getSourceDescriptions()));
     }
 
     /**
