@@ -6,6 +6,7 @@ use Gedcomx\Extensions\FamilySearch\Platform\Discussions\Comment;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\DiscussionState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilySearchSourceDescriptionState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilySearchStateFactory;
+use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreePersonState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeStateFactory;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\Memories\FamilySearchMemories;
 use Gedcomx\Rs\Client\StateFactory;
@@ -93,10 +94,14 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getResponse()->getStatusCode());
 
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
-        $upload = $memories->addArtifact($artifact, $description)->get();
+        $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $person = PersonBuilder::buildPerson('male');
 
@@ -108,6 +113,8 @@ class MemoriesTests extends ApiTestCase
             $persona->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $persona)
         );
+        $persona = $persona->get();
+        $this->assertEquals(HttpStatus::OK, $persona->getResponse()->getStatusCode());
     }
 
     /**
@@ -243,15 +250,20 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
-        $upload = $memories->addArtifact($artifact, $description)->get();
+        $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $person = PersonBuilder::buildPerson('male');
 
         $persona = $upload->addPersonPersona($person);
         $this->queueForDelete($persona);
+        $this->assertEquals(HttpStatus::CREATED, $persona->getResponse()->getStatusCode());
 
         $persona = $persona->get();
         $this->assertEquals(
@@ -260,6 +272,7 @@ class MemoriesTests extends ApiTestCase
             $this->buildFailMessage(__METHOD__.'(Status:OK)', $persona)
         );
         $persons = $persona->getPersons();
+        $this->assertNotNull($persons);
         $this->assertGreaterThan(
             0,
             count($persons),
@@ -281,17 +294,23 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
-        $upload = $memories->addArtifact($artifact, $description)->get();
+        $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $person = PersonBuilder::buildPerson('male');
 
         $persona = $upload->addPersonPersona($person);
         $this->queueForDelete($persona);
+        $this->assertEquals(HttpStatus::CREATED, $persona->getResponse()->getStatusCode());
 
         $personas = $upload->readPersonas();
+        $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
 
         $this->assertEquals(
             HttpStatus::OK,
@@ -427,19 +446,29 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
-        $upload = $memories->addArtifact($artifact, $description)->get();
+        $upload = $memories->addArtifact($artifact, $description);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $factory = new StateFactory();
         $this->collectionState($factory);
         $person1 = $this->createPerson('male');
+        $this->assertEquals(HttpStatus::CREATED, $person1->getResponse()->getStatusCode());
+        $person1 = $person1->get();
+        $this->assertEquals(HttpStatus::OK, $person1->getResponse()->getStatusCode());
         $person2 = PersonBuilder::buildPerson('male');
 
         $persona = $upload->addPersonPersona($person2);
+        $this->assertEquals(HttpStatus::CREATED, $persona->getResponse()->getStatusCode());
         $person1->addPersonaPersonState($persona);
         $personas = $person1->loadPersonaReferences();
+        $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
         $personas = $personas->get();
+        $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
         $updated = $personas->update($personas->getPerson());
 
         $this->assertEquals(
@@ -524,20 +553,33 @@ class MemoriesTests extends ApiTestCase
         $factory = new FamilyTreeStateFactory();
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
+        $this->assertNotEmpty($memories->getAccessToken());
 
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
-        $upload = $memories->addArtifact($artifact, $description)->get();
+        $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
+        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $upload = $upload->get();
+        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $person = PersonBuilder::buildPerson('male');
 
         $persona = $upload->addPersonPersona($person);
+        $this->assertEquals(HttpStatus::CREATED, $persona->getResponse()->getStatusCode());
+        /** @var FamilyTreePersonState $personas */
+        $personas = $upload->readPersonas();
+        $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
+        $this->assertNotNull($personas->getPersons());
+        $this->assertEquals(1, count($personas->getPersons()));
         $persona = $persona->delete();
         $this->assertEquals(
             HttpStatus::NO_CONTENT,
             $persona->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $persona)
         );
+        $personas = $upload->readPersonas();
+        $this->assertEquals(HttpStatus::NO_CONTENT, $personas->getResponse()->getStatusCode());
+        $this->assertNull($personas->getPersons());
     }
 
     /**
