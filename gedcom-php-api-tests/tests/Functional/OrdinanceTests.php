@@ -76,6 +76,13 @@ class OrdinanceTests extends ApiTestCase
             $response->getStatusCode(),
             'Error with valid Ordinance test. Returned: ' . HttpStatus::getText($response->getStatusCode()) . "(".$response->getStatusCode().")"
         );
+
+        $returnedData = json_decode($response->getBody(true));
+        $this->assertObjectHasAttribute(
+            'collections',
+            $returnedData,
+            'No collection information found.'
+        );
     }
 
     /**
