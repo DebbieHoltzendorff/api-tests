@@ -32,7 +32,11 @@ class SearchAndMatchTests extends ApiTestCase
 
         $p = PersonBuilder::buildPerson(null);
         $person1 = $this->collectionState()->addPerson($p);
-        $person2 = $this->collectionState()->addPerson($p)->get();
+        $this->assertEquals(HttpStatus::CREATED, $person1->getResponse()->getStatusCode());
+        $person2 = $this->collectionState()->addPerson($p);
+        $this->assertEquals(HttpStatus::CREATED, $person2->getResponse()->getStatusCode());
+        $person2 = $person2->get();
+        $this->assertEquals(HttpStatus::OK, $person2->getResponse()->getStatusCode());
         $this->queueForDelete($person1, $person2);
 
         sleep(30); // This is to ensure the matching system on the server has time to recognize the two new duplicates
@@ -42,15 +46,22 @@ class SearchAndMatchTests extends ApiTestCase
             $matches->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__, $matches)
         );
+        $this->assertNotNull($matches->getResults());
         $entries = $matches->getResults()->getEntries();
+        $this->assertNotEmpty($entries);
         $entry = array_shift($entries);
         $id = $entry->getId();
+        $this->assertNotEmpty($id);
         $match = $collection->readPersonById($id);
         $person2->addNonMatchState($match);
         $state = $person2->readNonMatches();
 
         $this->assertNotNull($state->ifSuccessful());
-        $this->assertEquals((int)$state->getResponse()->getStatusCode(), 200);
+        $this->assertEquals(HttpStatus::OK, $state->getResponse()->getStatusCode());
+        $this->assertNotNull($state->getEntity());
+        $this->assertNotEmpty($state->getEntity()->getPersons());
+        $this->assertEquals(1, count($state->getEntity()->getPersons()));
+        $this->assertEquals($id, $state->getPerson()->getId());
     }
 
     /**
@@ -173,7 +184,7 @@ class SearchAndMatchTests extends ApiTestCase
         $state = $collection->searchForPersonMatches($query);
 
         $this->assertNotNull($state->ifSuccessful());
-        $this->assertEquals((int)$state->getResponse()->getStatusCode(), 200);
+        $this->assertEquals(HttpStatus::OK, $state->getResponse()->getStatusCode());
         $this->assertNotNull($state->getResults());
         $this->assertNotNull($state->getResults()->getEntries());
         $this->assertGreaterThan(0, count($state->getResults()->getEntries()));
