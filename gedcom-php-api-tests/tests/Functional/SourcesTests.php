@@ -210,6 +210,7 @@ class SourcesTests extends ApiTestCase
     public function testCreateUserUploadedSource()
     {
         $this->collectionState(new FamilyTreeStateFactory());
+<<<<<<< HEAD
         /** @var FamilyTreePersonState $person */
         $person = $this->createPerson();
         $this->assertEquals(
@@ -225,6 +226,12 @@ class SourcesTests extends ApiTestCase
             $this->buildFailMessage(__METHOD__.'(read person)', $person)
         );
 
+=======
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+>>>>>>> 80753770107f6e8308250f64754a582f92da9aee
         $ds = new DataSource();
         $ds->setTitle("Sample Memory");
         $ds->setFile(ArtifactBuilder::makeTextFile());
@@ -235,7 +242,12 @@ class SourcesTests extends ApiTestCase
             $this->buildFailMessage(__METHOD__.'(add artifact)', $a1)
         );
         $this->queueForDelete($a1);
+        $this->assertEquals(HttpStatus::CREATED, $a1->getResponse()->getStatusCode());
 
+        $artifacts = $person->readArtifacts();
+        $this->assertEquals(HttpStatus::OK, $artifacts->getResponse()->getStatusCode());
+
+<<<<<<< HEAD
         /** @var  $artifact */
         $artifact = $person->readArtifacts();
         $this->assertEquals(
@@ -245,6 +257,9 @@ class SourcesTests extends ApiTestCase
         );
         $artifact = $artifact->getSourceDescription();
 
+=======
+        $artifact = $artifacts->getSourceDescription();
+>>>>>>> 80753770107f6e8308250f64754a582f92da9aee
         $memoryUri = $artifact->getLink("memory")->getHref();
         $source = SourceBuilder::newSource();
         $source->setAbout($memoryUri);
