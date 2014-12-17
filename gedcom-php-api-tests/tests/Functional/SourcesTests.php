@@ -299,15 +299,25 @@ class SourcesTests extends ApiTestCase
     {
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
+        $this->assertNotNull($this->collectionState());
+        $this->assertTrue($this->collectionState()->isAuthenticated());
+        $this->assertNotNull($this->collectionState()->getClient());
         $client = $this->collectionState()->getClient();
+        $this->assertNotEmpty($this->collectionState()->getAccessToken());
         $token = $this->collectionState()->getAccessToken();
         /** @var FamilyTreePersonState $person */
-        $person = $this->createPerson()->get();
+        $person = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $person = $person->get();
+        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
         $sds = $this->collectionState()->addSourceDescription(SourceBuilder::hitchhiker());
         $this->queueForDelete($sds);
 
         $person->addSourceReferenceState($sds);
-        $link = $person->getLink("source-descriptions")->getHref();
+        $linkObj = $person->getLink(Rel::SOURCE_DESCRIPTIONS);
+        $this->assertNotNull($linkObj);
+        $link = $linkObj->getHref();
+        $this->assertNotEmpty($link);
         $request = $client->createRequest(Request::GET, $link);
         $request->setHeader('Accept', Gedcomx::JSON_MEDIA_TYPE);
         $request->setHeader('Authorization', "Bearer {$token}");
@@ -318,6 +328,8 @@ class SourcesTests extends ApiTestCase
         $this->assertNotNull($state->ifSuccessful());
         $this->assertEquals(HttpStatus::OK, $state->getResponse()->getStatusCode());
         $this->assertNotNull($state->getSourceDescription());
+        $this->assertNotNull($state->getEntity());
+        $this->assertNotNull($state->getEntity()->getPersons());
     }
 
     /**
@@ -382,25 +394,50 @@ class SourcesTests extends ApiTestCase
     {
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
+        $this->assertNotNull($this->collectionState());
+        $this->assertTrue($this->collectionState()->isAuthenticated());
+        $this->assertNotNull($this->collectionState()->getClient());
         $client = $this->collectionState()->getClient();
+        $this->assertNotEmpty($this->collectionState()->getAccessToken());
         $token = $this->collectionState()->getAccessToken();
         /** @var FamilyTreePersonState $father */
-        $father = $this->createPerson('male')->get();
+        $father = $this->createPerson('male');
+        $this->assertEquals(HttpStatus::CREATED, $father->getResponse()->getStatusCode());
+        $father = $father->get();
+        $this->assertEquals(HttpStatus::OK, $father->getResponse()->getStatusCode());
         $child = $this->createPerson();
+        $this->assertEquals(HttpStatus::CREATED, $child->getResponse()->getStatusCode());
         $chapr = new ChildAndParentsRelationship();
+        $this->assertNotEmpty($father->getResourceReference());
         $chapr->setFather($father->getResourceReference());
+        $this->assertnotnull($child->getResourceReference());
         $chapr->setChild($child->getResourceReference());
         /** @var ChildAndParentsRelationshipState $relation */
-        $relation = $this->collectionState()->addChildAndParentsRelationship($chapr)->get();
+        $relation = $this->collectionState()->addChildAndParentsRelationship($chapr);
         $this->queueForDelete($relation);
+        $this->assertEquals(HttpStatus::CREATED, $relation->getResponse()->getStatusCode());
+        $relation = $relation->get();
+        $this->assertEquals(HttpStatus::OK, $relation->getResponse()->getStatusCode());
 
         /** @var SourceDescriptionState $sds */
-        $sds = $this->collectionState()->addSourceDescription(SourceBuilder::hitchhiker())->get();
+        $sds = $this->collectionState()->addSourceDescription(SourceBuilder::hitchhiker());
+        $this->queueForDelete($sds);
+        $this->assertEquals(HttpStatus::CREATED, $sds->getResponse()->getStatusCode());
+        $sds = $sds->get();
+        $this->assertEquals(HttpStatus::OK, $sds->getResponse()->getStatusCode());
         $relation->addSourceReferenceState($sds);
+        $this->assertNotNull($father->getLink(Rel::CHILD_RELATIONSHIPS));
         $relationships = $father->loadChildRelationships()->getChildAndParentsRelationships();
+        $this->assertNotEmpty($relationships);
         $relationship = array_shift($relationships);
+        $link1 = $relationship->getLink(Rel::RELATIONSHIP);
+        $link2 = $relationship->getLink(Rel::SELF);
+        $this->assertTrue($link1 != null || $link2 != null);
         $relation = $father->readChildAndParentsRelationship($relationship);
-        $link = $relation->getLink("source-descriptions")->getHref();
+        $linkObj = $relation->getLink(Rel::SOURCE_DESCRIPTIONS);
+        $this->assertNotNull($linkObj);
+        $link = $linkObj->getHref();
+        $this->assertNotEmpty($link);
         $request = $client->createRequest(Request::GET, $link);
         $request->setHeader('Accept', FamilySearchPlatform::JSON_MEDIA_TYPE);
         $request->setHeader('Authorization', "Bearer {$token}");
@@ -456,24 +493,39 @@ class SourcesTests extends ApiTestCase
     {
         $factory = new FamilyTreeStateFactory();
         $this->collectionState($factory);
+        $this->assertTrue($this->collectionState()->isAuthenticated());
+        $this->assertNotNull($this->collectionState()->getClient());
         $client = $this->collectionState()->getClient();
+        $this->assertNotNull($this->collectionState()->getAccessToken());
         $token = $this->collectionState()->getAccessToken();
         /** @var FamilyTreePersonState $husband */
-        $husband = $this->createPerson('male')->get();
+        $husband = $this->createPerson('male');
+        $this->assertEquals(HttpStatus::CREATED, $husband->getResponse()->getStatusCode());
+        $husband = $husband->get();
+        $this->assertEquals(HttpStatus::OK, $husband->getResponse()->getStatusCode());
         $wife = $this->createPerson('female');
+        $this->assertEquals(HttpStatus::CREATED, $wife->getResponse()->getStatusCode());
         /** @var RelationshipState $relation */
         $relation = $husband->addSpouse($wife);
         $this->queueForDelete($relation);
+        $this->assertEquals(HttpStatus::CREATED, $relation->getResponse()->getStatusCode());
 
         $sds = $this->collectionState()->addSourceDescription(SourceBuilder::hitchhiker());
         $this->queueForDelete($sds);
+        $this->assertEquals(HttpStatus::CREATED, $sds->getResponse()->getStatusCode());
 
         $relation->addSourceDescriptionState($sds);
         $relationships = $husband->loadSpouseRelationships();
+        $this->assertEquals(HttpStatus::OK, $relationships->getResponse()->getStatusCode());
         $relations = $relationships->getRelationships();
+        $this->assertNotEmpty($relations);
         $relationship = array_shift($relations);
         $relation = $husband->readRelationship($relationship);
-        $link = $relation->getLink("source-descriptions")->getHref();
+        $this->assertEquals(HttpStatus::OK, $relation->getResponse()->getStatusCode());
+        $linkObj = $relation->getLink(Rel::SOURCE_DESCRIPTIONS);
+        $this->assertNotNull($linkObj);
+        $link = $linkObj->getHref();
+        $this->assertNotEmpty($link);
         $request = $client->createRequest(Request::GET, $link);
         $request->setHeader('Accept', Gedcomx::JSON_MEDIA_TYPE);
         $request->setHeader('Authorization', "Bearer {$token}");
@@ -483,6 +535,7 @@ class SourcesTests extends ApiTestCase
         $this->assertNotNull($state->ifSuccessful());
         $this->assertEquals(HttpStatus::OK, $state->getResponse()->getStatusCode());
         $this->assertNotNull($state->getSourceDescription());
+        $this->assertNotEmpty($state->getEntity()->getRelationships());
     }
 
     /**
