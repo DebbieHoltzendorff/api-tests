@@ -1308,7 +1308,7 @@ class PersonTests extends ApiTestCase
         $newState = $this->getPerson($id);
         $this->assertEquals(
             HttpStatus::GONE,
-            $newState->getResponse()->getStatus(),
+            $newState->getResponse()->getStatusCode(),
             $this->buildFailMessage(__METHOD__.'(read)', $newState)
         );
 
