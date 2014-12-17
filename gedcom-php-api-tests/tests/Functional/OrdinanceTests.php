@@ -1,6 +1,6 @@
 <?php 
 
-namespace Gedcomx\Rs\Functional\Client;
+namespace Gedcomx\ApiTests\Functional;
 
 use Gedcomx\Gedcomx;
 use Gedcomx\Rs\Client\GedcomxApplicationState;
