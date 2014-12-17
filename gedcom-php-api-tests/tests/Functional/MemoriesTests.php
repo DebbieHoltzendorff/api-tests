@@ -2,6 +2,7 @@
 
 namespace Gedcomx\ApiTests\Functional;
 
+use Gedcomx\Extensions\FamilySearch\FamilySearchPlatform;
 use Gedcomx\Extensions\FamilySearch\Platform\Discussions\Comment;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\DiscussionState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilySearchSourceDescriptionState;
@@ -9,15 +10,18 @@ use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilySearchStateFactory;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreePersonState;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\FamilyTree\FamilyTreeStateFactory;
 use Gedcomx\Extensions\FamilySearch\Rs\Client\Memories\FamilySearchMemories;
+use Gedcomx\Gedcomx;
+use Gedcomx\Rs\Client\PersonState;
+use Gedcomx\Rs\Client\SourceDescriptionState;
 use Gedcomx\Rs\Client\StateFactory;
 use Gedcomx\Rs\Client\Util\DataSource;
 use Gedcomx\Rs\Client\Util\HttpStatus;
-use Gedcomx\Rs\Client\Util\ImageSource;
-use Gedcomx\Rs\Client\Util\MultiPartManager;
 use Gedcomx\Tests\ApiTestCase;
 use Gedcomx\Tests\ArtifactBuilder;
 use Gedcomx\Tests\PersonBuilder;
 use Gedcomx\Tests\SourceBuilder;
+use Gedcomx\Types\ResourceType;
+use Guzzle\Http\Message\Response;
 
 class MemoriesTests extends ApiTestCase
 {
@@ -33,6 +37,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -40,31 +45,66 @@ class MemoriesTests extends ApiTestCase
         /** @var \Gedcomx\Rs\Client\SourceDescriptionState $upload */
         $upload = $memories->addArtifact($artifact, $description);
         $this->queueForDelete($upload);
-        $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::CREATED,
+            $upload->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $upload)
+        );
         $upload = $upload->get();
-        $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::OK,
+            $upload->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $upload)
+        );
 
         $this->collectionState($factory);
+        /** @var FamilyTreePersonState $person */
         $person = $this->createPerson('male');
         $this->queueForDelete($person);
-        $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::CREATED,
+            $person->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $person)
+        );
         $person = $person->get();
-        $this->assertEquals(HttpStatus::OK, $person->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::OK,
+            $person->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $person)
+        );
 
         $persona = $upload->addPersonPersona(PersonBuilder::buildPerson('male'));
         $this->queueForDelete($persona);
-        $this->assertEquals(HttpStatus::CREATED, $persona->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::CREATED,
+            $persona->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $persona)
+        );
         $persona = $persona->get();
-        $this->assertEquals(HttpStatus::OK, $persona->getResponse()->getStatusCode());
+        $this->assertEquals(
+            HttpStatus::OK,
+            $persona->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $persona)
+        );
 
+        /** @var  FamilyTreePersonState $newState */
         $newState = $person->addPersonaPersonState($persona);
         $this->assertEquals(
             HttpStatus::CREATED,
             $newState->getResponse()->getStatusCode(),
-            $this->buildFailMessage(__METHOD__, $newState)
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $newState)
         );
-        $newState = $newState->get();
-        $this->assertEquals(HttpStatus::OK, $newState->getResponse()->getStatusCode());
+        $newState = $person->get();
+        $this->assertEquals(
+            HttpStatus::OK,
+            $newState->getResponse()->getStatusCode(),
+            $this->buildFailMessage(__METHOD__.':'.__LINE__, $newState)
+        );
+        /** @var FamilySearchPlatform $entity */
+        $entity = $newState->getEntity();
+        $sources = $entity->getSourceDescriptions();
+        $this->assertNotEmpty($sources);
+        $this->assertEquals($sources[0]->getResourceType(), ResourceType::PERSON);
     }
 
     /**
@@ -119,6 +159,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getResponse()->getStatusCode());
@@ -161,6 +202,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -173,6 +215,7 @@ class MemoriesTests extends ApiTestCase
         $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $this->collectionState($factory);
+        /** @var FamilyTreePersonState $person */
         $person = $this->createPerson('male');
         $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
         $person = $person->get();
@@ -242,6 +285,7 @@ class MemoriesTests extends ApiTestCase
     public function testReadMemoriesForAUser()
     {
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -273,6 +317,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -302,6 +347,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -346,6 +392,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -438,6 +485,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -446,6 +494,7 @@ class MemoriesTests extends ApiTestCase
         $this->queueForDelete($upload);
         $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
+        /** @var Gedcomx $gedcom */
         $gedcom = $upload->getEntity();
         $this->assertNotNull($gedcom);
         $descriptions = $gedcom->getSourceDescriptions();
@@ -456,6 +505,7 @@ class MemoriesTests extends ApiTestCase
             }
         }
 
+        /** @var FamilySearchMemories $updated */
         $updated = $upload->update($gedcom);
 
         $this->assertEquals(
@@ -477,6 +527,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -489,6 +540,7 @@ class MemoriesTests extends ApiTestCase
         $this->assertEquals(HttpStatus::OK, $upload->getResponse()->getStatusCode());
 
         $this->collectionState($factory);
+        /** @var FamilyTreePersonState $person */
         $person = $this->createPerson('male');
         $this->assertEquals(HttpStatus::CREATED, $person->getResponse()->getStatusCode());
         $person = $person->get();
@@ -533,6 +585,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -545,6 +598,7 @@ class MemoriesTests extends ApiTestCase
 
         $factory = new StateFactory();
         $this->collectionState($factory);
+        /** @var FamilyTreePersonState $person1 */
         $person1 = $this->createPerson('male');
         $this->assertEquals(HttpStatus::CREATED, $person1->getResponse()->getStatusCode());
         $person1 = $person1->get();
@@ -558,8 +612,9 @@ class MemoriesTests extends ApiTestCase
         $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
         $personas = $personas->get();
         $this->assertEquals(HttpStatus::OK, $personas->getResponse()->getStatusCode());
-        $updated = $personas->update($personas->getPerson());
 
+        /** @var PersonState $updated */
+        $updated = $personas->update($personas->getPerson());
         $this->assertEquals(
             HttpStatus::NO_CONTENT,
             $updated->getResponse()->getStatusCode(),
@@ -582,10 +637,12 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
 
+        /** @var SourceDescriptionState $upload */
         $upload = $memories->addArtifact($artifact, $description);
         $this->assertEquals(HttpStatus::CREATED, $upload->getResponse()->getStatusCode());
         $upload = $upload->delete();
@@ -606,6 +663,7 @@ class MemoriesTests extends ApiTestCase
     public function testDeleteMemoriesComment()
     {
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -654,6 +712,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilyTreeStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -705,6 +764,7 @@ class MemoriesTests extends ApiTestCase
 
         $description = SourceBuilder::newSource();
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -733,6 +793,7 @@ class MemoriesTests extends ApiTestCase
         $artifact->setTitle($this->faker->sentence(4));
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -762,6 +823,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
@@ -791,6 +853,7 @@ class MemoriesTests extends ApiTestCase
         $description = SourceBuilder::newSource();
 
         $factory = new FamilySearchStateFactory();
+        /** @var FamilySearchMemories $memories */
         $memories = $factory->newMemoriesState();
         $memories = $this->authorize($memories);
         $this->assertNotEmpty($memories->getAccessToken());
